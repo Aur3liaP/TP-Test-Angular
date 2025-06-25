@@ -1,4 +1,12 @@
-import { Component, effect, input, Input, output, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  effect,
+  input,
+  Input,
+  output,
+  signal,
+} from '@angular/core';
 import { Task, TaskComponent } from '../task/task.component';
 import { AddTaskModaleComponent } from '../add-task-modale/add-task-modale.component';
 import {
@@ -12,14 +20,17 @@ import {
 
 @Component({
   selector: 'app-list',
+  standalone: true,
   imports: [TaskComponent, AddTaskModaleComponent, DragDropModule],
   templateUrl: './list.component.html',
   styleUrl: './list.component.css',
 })
 export class ListComponent {
   listSignal = input.required<List>();
-  isModalOpen = signal(false);
+  connectedDropLists = input<string[]>([]);
   updateList = output<List>();
+
+  isModalOpen = signal(false);
 
   openModal() {
     this.isModalOpen.set(true);
@@ -27,6 +38,10 @@ export class ListComponent {
 
   closeModal() {
     this.isModalOpen.set(false);
+  }
+
+  get connectedLists(): string[] {
+    return this.connectedDropLists() ?? [];
   }
 
   addTask(newTask: { title: string; description: string }) {
@@ -48,33 +63,56 @@ export class ListComponent {
       tasks: [...currentList.tasks, taskToAdd],
     };
 
-    console.log('Nouvelle tâche à ajouter:', taskToAdd);
-    console.log('Liste mise à jour:', updatedList);
-
     this.updateList.emit(updatedList);
     this.closeModal();
   }
 
   drop(event: CdkDragDrop<Task[]>) {
-    const oldTasks = [...this.listSignal().tasks];
-    moveItemInArray(oldTasks, event.previousIndex, event.currentIndex);
+    const currentList = this.listSignal();
 
-    const updatedList = {
-      ...this.listSignal(),
-      tasks: oldTasks,
-    };
+    if (event.previousContainer === event.container) {
+      const updatedTasks = [...currentList.tasks];
+      moveItemInArray(updatedTasks, event.previousIndex, event.currentIndex);
 
-    this.updateList.emit(updatedList);
+      const updatedList = { ...currentList, tasks: updatedTasks };
+      this.updateList.emit(updatedList);
+    } else {
+      const previousTasks = event.previousContainer.data;
+      const currentTasks = [...currentList.tasks];
+
+      const [movedTask] = previousTasks.splice(event.previousIndex, 1);
+      currentTasks.splice(event.currentIndex, 0, movedTask);
+
+      const sourceListId = +event.previousContainer.id.replace(
+        'cdk-drop-list-',
+        ''
+      );
+
+      const sourceListUpdate: List = {
+        id: sourceListId,
+        title: '',
+        tasks: previousTasks,
+      };
+
+      this.updateList.emit(sourceListUpdate);
+
+      const updatedList: List = {
+        ...currentList,
+        tasks: currentTasks,
+      };
+
+      this.updateList.emit(updatedList);
+    }
   }
 
   updateTask(editedTask: Task) {
-    const updatedTasks = this.listSignal().tasks.map(task =>
+    const updatedTasks = this.listSignal().tasks.map((task) =>
       task.id === editedTask.id ? editedTask : task
     );
 
     const updatedList = {
       ...this.listSignal(),
-      tasks: updatedTasks
+      tasks: updatedTasks,
     };
 
     this.updateList.emit(updatedList);

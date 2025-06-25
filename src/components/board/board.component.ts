@@ -17,8 +17,14 @@ export class BoardComponent {
 
   handleListUpdate(updatedList: List) {
     const updatedLists = this.lists().map((l: List) =>
-      l.id === updatedList.id ? updatedList : l
-    );
+    l.id === updatedList.id
+      ? { ...updatedList, title: l.title }
+      : l
+  );
     this.lists.set(updatedLists);
   }
+
+  get connectedDropListIds(): string[] {
+  return this.lists().map((l) => 'cdk-drop-list-' + l.id);
+}
 }
