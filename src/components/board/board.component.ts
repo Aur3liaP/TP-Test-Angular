@@ -1,9 +1,10 @@
 import { Component, signal } from '@angular/core';
 import { List, ListComponent } from "../list/list.component";
+import { DragDropModule } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-board',
-  imports: [ListComponent],
+  imports: [ListComponent, DragDropModule],
   templateUrl: './board.component.html',
   styleUrl: './board.component.css'
 })
@@ -15,10 +16,9 @@ export class BoardComponent {
   ])
 
   handleListUpdate(updatedList: List) {
-  const currentLists = this.lists();
-  const newLists = currentLists.map(list =>
-    list.id === updatedList.id ? updatedList : list
-  );
-  this.lists.set(newLists);
-}
+    const updatedLists = this.lists().map((l: List) =>
+      l.id === updatedList.id ? updatedList : l
+    );
+    this.lists.set(updatedLists);
+  }
 }
