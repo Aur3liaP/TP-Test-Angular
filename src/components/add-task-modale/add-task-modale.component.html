@@ -1,0 +1,28 @@
+<div class="fixed inset-0 bg-black/50 flex justify-center items-center">
+  <div class="bg-white p-4 rounded shadow-lg w-96">
+    <h2 class="text-xl mb-4">Ajouter une tâche</h2>
+    <form [formGroup]="taskForm" (ngSubmit)="onSubmit()">
+      <div class="mb-4">
+        <label class="block text-gray-700">Titre</label>
+        <input type="text" formControlName="title" name="title" class="border p-2 w-full" required>
+        @if (title?.invalid && title?.touched) {
+      <div class="text-red-500 text-xs mt-1">
+        @if (title?.errors?.['required']) {
+          <p>Le titre est obligatoire.</p>
+        }
+      </div>
+    }
+      </div>
+      <div class="mb-4">
+        <label class="block text-gray-700">Description</label>
+        <textarea type="text" formControlName="description" name="description" class="border p-2 w-full" [class.border-red-500]="description?.invalid && description?.touched"
+        (input)="onDescriptionInput($event)" maxlength="{{ maxChars }}"></textarea>
+        <p class="text-sm text-gray-500">Caractères restants: {{ maxChars - (description?.value?.length || 0) }}</p>
+      </div>
+      <div class="flex justify-end">
+        <button type="submit" class="btn btn-primary">Ajouter</button>
+        <button type="button" class="btn btn-secondary ml-2" (click)="closeModal()">Annuler</button>
+      </div>
+    </form>
+  </div>
+</div>

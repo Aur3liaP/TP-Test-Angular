@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, input, Input, signal } from '@angular/core';
 
 @Component({
   selector: 'app-task',
@@ -7,5 +7,10 @@ import { Component, Input } from '@angular/core';
   styleUrl: './task.component.css',
 })
 export class TaskComponent {
-  @Input() task: any;
+  task = input.required<Task>();
+}
+export interface Task {
+  id: number;
+  title: string;
+  description: string;
 }
