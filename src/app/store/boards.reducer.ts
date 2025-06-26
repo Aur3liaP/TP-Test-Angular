@@ -8,6 +8,8 @@ import {
   moveTask,
   reorderTask,
   updateList,
+  addBoard,
+  addBoardSuccess,
 } from './boards.actions';
 import { initialBoards } from '../datas/initial-board';
 
@@ -25,6 +27,10 @@ function generateNewTaskId(tasks: Task[]): number {
   return tasks.length > 0 ? Math.max(...tasks.map((task) => task.id)) + 1 : 1;
 }
 
+function generateNewBoardId(boards: Board[]): number {
+  return boards.length > 0 ? Math.max(...boards.map(board => board.id)) + 1 : 1;
+}
+
 export const boardsReducer = createReducer(
   initialState,
 
@@ -37,6 +43,40 @@ export const boardsReducer = createReducer(
   on(selectBoard, (state, { boardId }) => ({
     ...state,
     selectedBoardId: boardId,
+  })),
+
+  on(addBoard, (state, { title }) => {
+    const newBoard: Board = {
+      id: generateNewBoardId(state.boards),
+      title: title,
+      lists: [
+        {
+          id: 1,
+          title: 'À faire',
+          tasks: []
+        },
+        {
+          id: 2,
+          title: 'En cours',
+          tasks: []
+        },
+        {
+          id: 3,
+          title: 'Fait',
+          tasks: []
+        }
+      ]
+    };
+
+    return {
+      ...state,
+      boards: [...state.boards, newBoard]
+    };
+  }),
+
+  on(addBoardSuccess, (state, { board }) => ({
+    ...state,
+    boards: [...state.boards, board]
   })),
 
   // -----------------------Reducer pour les tâches-----------------------

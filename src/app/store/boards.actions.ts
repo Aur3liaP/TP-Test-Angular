@@ -12,6 +12,16 @@ export const selectBoard = createAction(
   props<{ boardId: number }>()
 );
 
+export const addBoard = createAction(
+  '[Boards] Add Board',
+  props<{ title: string }>()
+);
+
+export const addBoardSuccess = createAction(
+  '[Boards] Add Board Success',
+  props<{ board: Board }>()
+);
+
 
 // -----------------------Actions pour les tâches-----------------------
 export const addTask = createAction(
