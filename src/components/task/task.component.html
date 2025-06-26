@@ -1,7 +1,7 @@
-<div class="bg-white border-1 border-violet-400 m-2 shadow-violet-400 shadow-xs rounded-xl p-2 cursor-pointer h-1/6 min-h-16" (dblclick)="enableEdit()">
-   @if (isEditing()) {
+<div class="bg-white border-1 border-violet-400 m-2 shadow-violet-400 shadow-xs rounded-xl p-2 cursor-pointer min-h-16" (dblclick)="enableEdit()">
+  @if (isEditing()) {
     <input
-      class="border border-gray-300 "
+      class="border border-gray-300 w-full mb-2 p-1 rounded"
       [value]="editedTitle()"
       (input)="onTitleInput($event)"
       (blur)="saveEdit()"
@@ -9,18 +9,17 @@
       (keydown.esc)="cancelEdit()"
       autofocus
     />
-    <br/>
-    <input
-      class="border border-gray-300 "
+    <textarea
+      class="border border-gray-300 w-full p-1 rounded resize-none"
       [value]="editedDescription()"
       (input)="onDescriptionInput($event)"
       (blur)="saveEdit()"
       (keydown.enter)="saveEdit()"
       (keydown.esc)="cancelEdit()"
-      autofocus
-    />
+      rows="2"
+    ></textarea>
   } @else {
-    <p class="font-medium">{{ task().title }}</p>
-    <p>{{ task().description }}</p>
+    <p class="font-medium break-words mb-1">{{ task().title }}</p>
+    <p class="break-words text-sm text-gray-600">{{ task().description }}</p>
   }
 </div>

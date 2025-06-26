@@ -1,4 +1,4 @@
-import { Component, input, OnInit, signal } from '@angular/core';
+import { Component, input, OnInit, output, signal } from '@angular/core';
 import { List, ListComponent } from "../list/list.component";
 import { DragDropModule } from '@angular/cdk/drag-drop';
 
@@ -10,6 +10,7 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 })
 export class BoardComponent implements OnInit {
   boardId = input.required<number>();
+  boardTitle = signal<string>('');
   lists = signal<List[]>([]);
 
     ngOnInit() {
@@ -20,6 +21,7 @@ export class BoardComponent implements OnInit {
       };
       this.lists.set(fakeBoards[this.boardId()] || []);
     }
+
 
   handleListUpdate(updatedList: List) {
     const updatedLists = this.lists().map((l: List) =>
