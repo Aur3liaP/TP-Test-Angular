@@ -13,22 +13,23 @@ export const selectSelectedBoardId = createSelector(
   (state) => state.selectedBoardId
 );
 
-export const selectSelectedBoard = createSelector(
-  selectBoardsState,
-  (state) => state.boards.find(board => board.id === state.selectedBoardId)
+export const selectSelectedBoard = createSelector(selectBoardsState, (state) =>
+  state.boards.find((board) => board.id === state.selectedBoardId)
 );
 
-export const selectBoardById = (boardId: number) => createSelector(
-  selectBoardsState,
-  (state) => state.boards.find(board => board.id === boardId)
-);
+export const selectBoardById = (boardId: number) =>
+  createSelector(selectBoardsState, (state) =>
+    state.boards.find((board) => board.id === boardId)
+  );
 
-export const selectBoardLists = (boardId: number) => createSelector(
-  selectBoardsState,
-  (state) => state.boards.find(board => board.id === boardId)?.lists || []
-);
+export const selectBoardLists = (boardId: number) =>
+  createSelector(
+    selectBoardsState,
+    (state) => state.boards.find((board) => board.id === boardId)?.lists || []
+  );
 
-export const selectBoardTitle = (boardId: number) => createSelector(
-  selectBoardsState,
-  (state) => state.boards.find(board => board.id === boardId)?.title || ''
-);
+export const selectBoardTitle = (boardId: number) =>
+  createSelector(
+    selectBoardsState,
+    (state) => state.boards.find((board) => board.id === boardId)?.title || ''
+  );

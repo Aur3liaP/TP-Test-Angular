@@ -22,7 +22,6 @@ export const addBoardSuccess = createAction(
   props<{ board: Board }>()
 );
 
-
 // -----------------------Actions pour les tâches-----------------------
 export const addTask = createAction(
   '[Tasks] Add Task',
@@ -36,26 +35,25 @@ export const updateTask = createAction(
 
 export const moveTask = createAction(
   '[Tasks] Move Task',
-  props<{ 
-    boardId: number; 
-    sourceListId: number; 
-    targetListId: number; 
-    taskId: number; 
-    sourceIndex: number; 
-    targetIndex: number; 
+  props<{
+    boardId: number;
+    sourceListId: number;
+    targetListId: number;
+    taskId: number;
+    sourceIndex: number;
+    targetIndex: number;
   }>()
 );
 
 export const reorderTask = createAction(
   '[Tasks] Reorder Task',
-  props<{ 
-    boardId: number; 
-    listId: number; 
-    previousIndex: number; 
-    currentIndex: number; 
+  props<{
+    boardId: number;
+    listId: number;
+    previousIndex: number;
+    currentIndex: number;
   }>()
 );
-
 
 // -----------------------Actions pour les listes-----------------------
 export const updateList = createAction(

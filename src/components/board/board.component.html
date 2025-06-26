@@ -1,8 +1,18 @@
 <div class="h-full shadow-lg bg-white rounded-md">
-  <h1 class="text-3xl font-bold py-4 text-center">Liste des tâches :</h1>
-  <div class="flex gap-4 p-4 h-8/10 justify-around overflow-x-auto lg:overflow-x-hidden" cdkDropListGroup>
+  <h1 class="text-3xl font-bold py-4 text-center">{{ boardTitle$ | async }}</h1>
+  <div
+    class="flex gap-4 p-4 h-8/10 justify-around overflow-x-auto lg:overflow-x-hidden"
+    cdkDropListGroup
+  >
     @for (list of lists$ | async; track list.id) {
-      <app-list [listSignal]="list" [connectedDropLists]="connectedDropListIds()" [boardId]="boardId()" (updateList)="handleListUpdate($event)" (taskMove)="handleTaskMove($event)" class="min-w-1/4 flex-shrink-0"></app-list>
+    <app-list
+      [listSignal]="list"
+      [connectedDropLists]="connectedDropListIds()"
+      [boardId]="boardId()"
+      (updateList)="handleListUpdate($event)"
+      (taskMove)="handleTaskMove($event)"
+      class="min-w-1/4 flex-shrink-0"
+    ></app-list>
     }
   </div>
 </div>

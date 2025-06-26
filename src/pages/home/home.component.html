@@ -1,48 +1,140 @@
-<div class="min-h-screen bg-gray-50 py-8">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="text-center mb-12">
-      <h1 class="text-4xl font-bold text-gray-900 mb-4">Bienvenue sur Trélo</h1>
-      <p class="text-xl text-gray-600">Organisez vos projets et tâches efficacement !</p>
-    </div>
-
-    <div class="flex justify-center mb-8">
-      <button
-        (click)="openModal()"
-        class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-violet-600 hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500 transition-colors shadow-lg">
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-        </svg>
-        Créer un nouveau tableau
-      </button>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      @for (board of boards$ | async; track board.id) {
-        <div 
-          class="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 cursor-pointer border border-gray-200 hover:border-violet-300"
-          (click)="goToBoard(board.id)">
-            <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ board.title }}</h3>
-        </div>
-      } @empty {
-        <div class="col-span-full text-center py-12">
-          <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
-          </svg>
-          <h3 class="text-lg font-medium text-gray-900 mb-2">Aucun tableau</h3>
-          <p class="text-gray-500 mb-4">Commencez par créer votre premier tableau</p>
-          <button
-            (click)="openModal()"
-            class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-violet-600 hover:bg-violet-700 transition-colors">
-            Créer un tableau
-          </button>
-        </div>
-      }
-    </div>
+<div class="w-[90vw] h-[87vh] block mt-[3vh] mx-auto">
+  <div class="text-center mb-12">
+    <h1 class="text-4xl font-bold text-gray-900 mb-4">Bienvenu sur Trélo</h1>
+    <p class="text-xl text-gray-600">
+      Organisez vos projets et tâches efficacement
+    </p>
   </div>
 
-  @if (isModalOpen()) {
-    <app-add-board-modale 
-      (addBoard)="addNewBoard($event)" 
-      (close)="closeModal()"/>
-  }
+  <div class="flex justify-center mb-8">
+    <button
+      (click)="openModal()"
+      class="inline-flex items-center px-6 py-5 text-base font-medium btn btn-violet"
+    >
+      <svg
+        class="w-5 h-5 mr-2"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+        ></path>
+      </svg>
+      Créer un nouveau tableau super bô
+    </button>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    @for (board of boards$ | async; track board.id) {
+    <div
+      class="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 cursor-pointer border border-gray-200 hover:border-violet-300"
+      (click)="goToBoard(board.id)"
+    >
+      <div class="p-6">
+        <div class="flex items-start justify-between">
+          <div class="flex-1">
+            <h3 class="text-lg font-semibold text-gray-900 mb-2">
+              {{ board.title }}
+            </h3>
+
+            <div class="flex items-center space-x-4 text-sm text-gray-500 mb-4">
+              <div class="flex items-center">
+                <svg
+                  class="w-4 h-4 mr-1"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                  ></path>
+                </svg>
+                {{ board.lists.length }} listes
+              </div>
+              <div class="flex items-center">
+                <svg
+                  class="w-4 h-4 mr-1"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"
+                  ></path>
+                </svg>
+                {{ getTotalTasks(board) }} tâches
+              </div>
+            </div>
+
+            <div class="w-full bg-gray-200 rounded-full h-2">
+              <div
+                class="bg-violet-600 h-2 rounded-full transition-all duration-300"
+                [style.width.%]="getCompletionPercentage(board)"
+              ></div>
+            </div>
+            <p class="text-xs text-gray-500 mt-1">
+              {{ getCompletionPercentage(board) }}% complété
+            </p>
+          </div>
+
+          <div class="ml-4">
+            <svg
+              class="w-6 h-6 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 5l7 7-7 7"
+              ></path>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+    } @empty {
+    <div class="col-span-full text-center py-12">
+      <svg
+        class="w-16 h-16 text-gray-400 mx-auto mb-4"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+        ></path>
+      </svg>
+      <h3 class="text-lg font-medium text-gray-900 mb-2">Aucun tableau</h3>
+      <p class="text-gray-500 mb-4">
+        Commencez par créer votre premier tableau Kanban
+      </p>
+      <button
+        (click)="openModal()"
+        class="px-4 py-2 text-sm font-medium btn btn-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        Créer un tableau
+      </button>
+    </div>
+    }
+  </div>
 </div>
+
+@if (isModalOpen()) {
+<app-add-board-modale (addBoard)="addNewBoard($event)" (close)="closeModal()" />
+}

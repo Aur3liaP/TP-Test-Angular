@@ -1,22 +1,14 @@
 import {
   Component,
-  computed,
-  effect,
   input,
-  Input,
-  OnInit,
   output,
   signal,
 } from '@angular/core';
 import { TaskComponent } from '../task/task.component';
 import { AddTaskModaleComponent } from '../add-task-modale/add-task-modale.component';
 import {
-  CdkDropList,
-  CdkDrag,
   DragDropModule,
   CdkDragDrop,
-  moveItemInArray,
-  transferArrayItem,
 } from '@angular/cdk/drag-drop';
 import { List, Task } from '../../app/store/boards.models';
 import { Store } from '@ngrx/store';
@@ -29,7 +21,7 @@ import { addTask, updateTask } from '../../app/store/boards.actions';
   templateUrl: './list.component.html',
   styleUrl: './list.component.css',
 })
-export class ListComponent implements OnInit{
+export class ListComponent{
   listSignal = input.required<List>();
   boardId = input.required<number>();
   connectedDropLists = input.required<string[]>(); 
@@ -42,11 +34,6 @@ export class ListComponent implements OnInit{
     sourceIndex: number;
     targetIndex: number;
   }>();
-
-  ngOnInit() {
-  console.log('DropList ID:', 'cdk-drop-list-' + this.listSignal().id);
-  console.log('Connected to:', this.connectedDropLists);
-}
 
   isModalOpen = signal(false);
 
