@@ -1,6 +1,15 @@
 import { createReducer, on } from '@ngrx/store';
-import { Board } from './boards.models';
-import { loadBoardsSuccess, selectBoard } from './boards.actions';
+import { Board, List, Task } from './boards.models';
+import {
+  loadBoardsSuccess,
+  selectBoard,
+  addTask,
+  updateTask,
+  moveTask,
+  reorderTask,
+  updateList,
+} from './boards.actions';
+import { initialBoards } from '../datas/initial-board';
 
 export interface BoardsState {
   boards: Board[];
@@ -8,15 +17,148 @@ export interface BoardsState {
 }
 
 export const initialState: BoardsState = {
-  boards: [],
+  boards: initialBoards,
   selectedBoardId: null,
 };
 
+function generateNewTaskId(tasks: Task[]): number {
+  return tasks.length > 0 ? Math.max(...tasks.map((task) => task.id)) + 1 : 1;
+}
+
 export const boardsReducer = createReducer(
   initialState,
-  on(loadBoardsSuccess, (state, { boards }) => ({ ...state, boards })),
+  
+  // -----------------------Reducer pour les boards-----------------------
+  on(loadBoardsSuccess, (state, { boards }) => ({
+    ...state,
+    boards,
+  })),
+
   on(selectBoard, (state, { boardId }) => ({
     ...state,
     selectedBoardId: boardId,
+  })),
+
+  // -----------------------Reducer pour les tâches-----------------------
+  on(addTask, (state, { boardId, listId, task }) => ({
+    ...state,
+    boards: state.boards.map((board) =>
+      board.id === boardId
+        ? {
+            ...board,
+            lists: board.lists.map((list) =>
+              list.id === listId
+                ? {
+                    ...list,
+                    tasks: [
+                      ...list.tasks,
+                      { ...task, id: generateNewTaskId(list.tasks) },
+                    ],
+                  }
+                : list
+            ),
+          }
+        : board
+    ),
+  })),
+
+  on(updateTask, (state, { boardId, listId, task }) => ({
+    ...state,
+    boards: state.boards.map((board) =>
+      board.id === boardId
+        ? {
+            ...board,
+            lists: board.lists.map((list) =>
+              list.id === listId
+                ? {
+                    ...list,
+                    tasks: list.tasks.map((t) => (t.id === task.id ? task : t)),
+                  }
+                : list
+            ),
+          }
+        : board
+    ),
+  })),
+
+  on(
+    reorderTask,
+    (state, { boardId, listId, previousIndex, currentIndex }) => ({
+      ...state,
+      boards: state.boards.map((board) =>
+        board.id === boardId
+          ? {
+              ...board,
+              lists: board.lists.map((list) =>
+                list.id === listId
+                  ? {
+                      ...list,
+                      tasks: (() => {
+                        const newTasks = [...list.tasks];
+                        const [movedTask] = newTasks.splice(previousIndex, 1);
+                        newTasks.splice(currentIndex, 0, movedTask);
+                        return newTasks;
+                      })(),
+                    }
+                  : list
+              ),
+            }
+          : board
+      ),
+    })
+  ),
+
+  on(
+    moveTask,
+    (
+      state,
+      { boardId, sourceListId, targetListId, taskId, sourceIndex, targetIndex }
+    ) => ({
+      ...state,
+      boards: state.boards.map((board) =>
+        board.id === boardId
+          ? {
+              ...board,
+              lists: board.lists.map((list) => {
+                if (list.id === sourceListId) {
+                  return {
+                    ...list,
+                    tasks: list.tasks.filter((task) => task.id !== taskId),
+                  };
+                } else if (list.id === targetListId) {
+                  const taskToMove = state.boards
+                    .find((b) => b.id === boardId)
+                    ?.lists.find((l) => l.id === sourceListId)
+                    ?.tasks.find((t) => t.id === taskId);
+
+                  if (taskToMove) {
+                    const newTasks = [...list.tasks];
+                    newTasks.splice(targetIndex, 0, taskToMove);
+                    return {
+                      ...list,
+                      tasks: newTasks,
+                    };
+                  }
+                }
+                return list;
+              }),
+            }
+          : board
+      ),
+    })
+  ),
+
+  // -----------------------Reducer pour les listes-----------------------
+
+  on(updateList, (state, { boardId, list }) => ({
+    ...state,
+    boards: state.boards.map((board) =>
+      board.id === boardId
+        ? {
+            ...board,
+            lists: board.lists.map((l) => (l.id === list.id ? list : l)),
+          }
+        : board
+    ),
   }))
 );
