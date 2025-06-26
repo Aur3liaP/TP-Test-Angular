@@ -6,7 +6,7 @@ import { Board } from '../../app/store/boards.models';
 import { selectAllBoards } from '../../app/store/boards.selectors';
 import { AsyncPipe } from '@angular/common';
 import { addBoard } from '../../app/store/boards.actions';
-import { AddBoardModaleComponent } from '../../components/add-board-modale/add-board-modale.component';
+import { AddBoardModaleComponent } from "../../components/add-board-modale/add-board-modale.component";
 
 @Component({
   selector: 'app-home',
@@ -39,17 +39,12 @@ export class HomeComponent {
   }
 
   getTotalTasks(board: Board): number {
-    return board.lists.reduce((total, list) => total + list.tasks.length, 0);
+    return board.lists.reduce((total, list) => total + (list.tasks?.length || 0), 0);
   }
 
   getCompletedTasks(board: Board): number {
-    const completedList = board.lists.find(
-      (list) =>
-        list.title.toLowerCase().includes('fait') ||
-        list.title.toLowerCase().includes('terminé') ||
-        list.title.toLowerCase().includes('done')
-    );
-    return completedList ? completedList.tasks.length : 0;
+    const completedList = board.lists.find(list => list.title.toLowerCase().includes('fait') || list.title.toLowerCase().includes('terminé') || list.title.toLowerCase().includes('done'));
+    return completedList?.tasks?.length || 0;
   }
 
   getCompletionPercentage(board: Board): number {

@@ -1,7 +1,12 @@
 <div class="h-full shadow-lg bg-white rounded-md">
-  <h1 class="text-3xl font-bold py-4 text-center">{{ boardTitle$ | async }}</h1>
+  <h1 class="text-3xl font-bold py-4 text-center">
+    {{ boardTitle$ | async }}
+    <button (click)="openBoardModal()" class="text-xl cursor-pointer">
+      ✏️
+    </button>
+  </h1>
   <div
-    class="flex gap-4 p-4 h-8/10 justify-around overflow-x-auto lg:overflow-x-hidden"
+    class="flex gap-4 p-4 h-8/10 justify-around overflow-x-auto"
     cdkDropListGroup
   >
     @for (list of lists$ | async; track list.id) {
@@ -16,3 +21,14 @@
     }
   </div>
 </div>
+
+@if (isBoardModalOpen()) {
+  <app-edit-board-modale
+    [boardTitle]="editableTitle"
+    [existingLists]="lists"
+    (updateBoardTitle)="editableTitle = $event; saveBoardTitle()"
+    (addList)="addListFromModal($event)"
+    (deleteList)="deleteList($event)"
+    (close)="closeBoardModal()"
+  />
+}
