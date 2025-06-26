@@ -7,7 +7,7 @@ import {
   output,
   signal,
 } from '@angular/core';
-import { Task, TaskComponent } from '../task/task.component';
+import {TaskComponent } from '../task/task.component';
 import { AddTaskModaleComponent } from '../add-task-modale/add-task-modale.component';
 import {
   CdkDropList,
@@ -17,6 +17,7 @@ import {
   moveItemInArray,
   transferArrayItem,
 } from '@angular/cdk/drag-drop';
+import { List, Task } from '../../app/store/boards.models';
 
 @Component({
   selector: 'app-list',
@@ -117,9 +118,4 @@ export class ListComponent {
 
     this.updateList.emit(updatedList);
   }
-}
-export interface List {
-  id: number;
-  title: string;
-  tasks: Task[];
 }

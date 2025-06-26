@@ -1,6 +1,7 @@
 import { Component, input, OnInit, output, signal } from '@angular/core';
-import { List, ListComponent } from "../list/list.component";
+import { ListComponent } from "../list/list.component";
 import { DragDropModule } from '@angular/cdk/drag-drop';
+import { List } from '../../app/store/boards.models';
 
 @Component({
   selector: 'app-board',

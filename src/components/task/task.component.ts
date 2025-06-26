@@ -1,4 +1,5 @@
 import { Component, input, Input, output, signal } from '@angular/core';
+import { Task } from '../../app/store/boards.models';
 
 @Component({
   selector: 'app-task',
@@ -42,9 +43,4 @@ export class TaskComponent {
     const input = event.target as HTMLInputElement;
     this.editedDescription.set(input.value);
   }
-}
-export interface Task {
-  id: number;
-  title: string;
-  description: string;
 }
