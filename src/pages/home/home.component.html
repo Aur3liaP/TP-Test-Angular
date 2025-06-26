@@ -1,0 +1,11 @@
+<div class="p-8">
+  <h1 class="text-2xl font-bold mb-4">Mes boards</h1>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    @for (board of boards; track $index) {
+    <div class="p-4 border rounded shadow hover:bg-gray-100 cursor-pointer" (click)="goToBoard(board.id)">
+      <h2 class="text-xl font-semibold">{{ board.title }}</h2>
+    </div>
+    }
+  </div>
+</div>

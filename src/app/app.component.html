@@ -1,8 +1,11 @@
 <nav class="bg-primary h-12 w-screen flex items-center justify-center">
   <ul class="w-[90%]">
-    <li class="text-white cursor-pointer hover:bg-white/20 w-fit py-1 px-2 rounded-xs">Accueil</li>
+    <li class="text-white cursor-pointer hover:bg-white/20 w-fit py-1 px-2 rounded-xs">
+      <a routerLink="/" routerLinkActive="active">Accueil</a>
+    </li>
   </ul>
 </nav>
 <div class="h-[90vh] w-screen flex items-center justify-center">
-  <app-board class="w-[90%] h-[90%]"/>
+  <router-outlet></router-outlet>
+  <!-- <app-board class="w-[90%] h-[90%]"/> -->
 </div>
