@@ -22,6 +22,16 @@ export const addBoardSuccess = createAction(
   props<{ board: Board }>()
 );
 
+export const updateBoard = createAction(
+  '[Boards] Update Board',
+  props<{ boardId: number; title: string }>()
+);
+
+export const deleteBoard = createAction(
+  '[Boards] Delete Board',
+  props<{ boardId: number }>()
+);
+
 // -----------------------Actions pour les tâches-----------------------
 export const addTask = createAction(
   '[Tasks] Add Task',
@@ -31,6 +41,11 @@ export const addTask = createAction(
 export const updateTask = createAction(
   '[Tasks] Update Task',
   props<{ boardId: number; listId: number; task: Task }>()
+);
+
+export const deleteTask = createAction(
+  '[Tasks] Delete Task',
+  props<{ boardId: number; listId: number; taskId: number }>()
 );
 
 export const moveTask = createAction(
@@ -56,7 +71,17 @@ export const reorderTask = createAction(
 );
 
 // -----------------------Actions pour les listes-----------------------
+export const addList = createAction(
+  '[Lists] Add List',
+  props<{ boardId: number; title: string }>()
+);
+
 export const updateList = createAction(
   '[Lists] Update List',
   props<{ boardId: number; list: List }>()
+);
+
+export const deleteList = createAction(
+  '[Lists] Delete List',
+  props<{ boardId: number; listId: number }>()
 );

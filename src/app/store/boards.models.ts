@@ -7,7 +7,7 @@ export interface Task {
 export interface List {
   id: number;
   title: string;
-  tasks: Task[];
+  tasks?: Task[];
 }
 
 export interface Board {

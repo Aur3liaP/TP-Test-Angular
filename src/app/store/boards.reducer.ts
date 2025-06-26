@@ -5,11 +5,16 @@ import {
   selectBoard,
   addTask,
   updateTask,
+  deleteTask,
   moveTask,
   reorderTask,
+  addList,
   updateList,
+  deleteList,
   addBoard,
   addBoardSuccess,
+  updateBoard,
+  deleteBoard,
 } from './boards.actions';
 import { initialBoards } from '../datas/initial-board';
 
@@ -23,14 +28,20 @@ export const initialState: BoardsState = {
   selectedBoardId: null,
 };
 
-function generateNewTaskId(tasks: Task[]): number {
-  return tasks.length > 0 ? Math.max(...tasks.map((task) => task.id)) + 1 : 1;
+function generateNewTaskId(tasks?: Task[]): number {
+  return tasks && tasks.length > 0
+    ? Math.max(...tasks.map((task) => task.id)) + 1
+    : 1;
 }
 
 function generateNewBoardId(boards: Board[]): number {
   return boards.length > 0
     ? Math.max(...boards.map((board) => board.id)) + 1
     : 1;
+}
+
+function generateNewListId(lists: List[]): number {
+  return lists.length > 0 ? Math.max(...lists.map((list) => list.id)) + 1 : 1;
 }
 
 export const boardsReducer = createReducer(
@@ -81,6 +92,20 @@ export const boardsReducer = createReducer(
     boards: [...state.boards, board],
   })),
 
+  on(updateBoard, (state, { boardId, title }) => ({
+    ...state,
+    boards: state.boards.map((board) =>
+      board.id === boardId ? { ...board, title } : board
+    ),
+  })),
+
+  on(deleteBoard, (state, { boardId }) => ({
+    ...state,
+    boards: state.boards.filter((board) => board.id !== boardId),
+    selectedBoardId:
+      state.selectedBoardId === boardId ? null : state.selectedBoardId,
+  })),
+
   // -----------------------Reducer pour les tâches-----------------------
   on(addTask, (state, { boardId, listId, task }) => ({
     ...state,
@@ -93,7 +118,7 @@ export const boardsReducer = createReducer(
                 ? {
                     ...list,
                     tasks: [
-                      ...list.tasks,
+                      ...(list.tasks || []),
                       { ...task, id: generateNewTaskId(list.tasks) },
                     ],
                   }
@@ -114,7 +139,30 @@ export const boardsReducer = createReducer(
               list.id === listId
                 ? {
                     ...list,
-                    tasks: list.tasks.map((t) => (t.id === task.id ? task : t)),
+                    tasks: (list.tasks || []).map((t) =>
+                      t.id === task.id ? task : t
+                    ),
+                  }
+                : list
+            ),
+          }
+        : board
+    ),
+  })),
+
+  on(deleteTask, (state, { boardId, listId, taskId }) => ({
+    ...state,
+    boards: state.boards.map((board) =>
+      board.id === boardId
+        ? {
+            ...board,
+            lists: board.lists.map((list) =>
+              list.id === listId
+                ? {
+                    ...list,
+                    tasks: (list.tasks || []).filter(
+                      (task) => task.id !== taskId
+                    ),
                   }
                 : list
             ),
@@ -136,7 +184,7 @@ export const boardsReducer = createReducer(
                   ? {
                       ...list,
                       tasks: (() => {
-                        const newTasks = [...list.tasks];
+                        const newTasks = [...(list.tasks || [])];
                         const [movedTask] = newTasks.splice(previousIndex, 1);
                         newTasks.splice(currentIndex, 0, movedTask);
                         return newTasks;
@@ -160,7 +208,7 @@ export const boardsReducer = createReducer(
       if (!board) return state;
 
       const sourceList = board.lists.find((l) => l.id === sourceListId);
-      const taskToMove = sourceList?.tasks.find((t) => t.id === taskId);
+      const taskToMove = sourceList?.tasks?.find((t) => t.id === taskId);
 
       if (!taskToMove) return state;
 
@@ -174,10 +222,12 @@ export const boardsReducer = createReducer(
                   if (list.id === sourceListId) {
                     return {
                       ...list,
-                      tasks: list.tasks.filter((task) => task.id !== taskId),
+                      tasks: (list.tasks || []).filter(
+                        (task) => task.id !== taskId
+                      ),
                     };
                   } else if (list.id === targetListId) {
-                    const newTasks = [...list.tasks];
+                    const newTasks = [...(list.tasks || [])];
                     newTasks.splice(targetIndex, 0, taskToMove);
                     return {
                       ...list,
@@ -194,6 +244,25 @@ export const boardsReducer = createReducer(
   ),
 
   // -----------------------Reducer pour les listes-----------------------
+  
+  on(addList, (state, { boardId, title }) => ({
+    ...state,
+    boards: state.boards.map((board) =>
+      board.id === boardId
+        ? {
+            ...board,
+            lists: [
+              ...board.lists,
+              {
+                id: generateNewListId(board.lists),
+                title,
+                tasks: [],
+              },
+            ],
+          }
+        : board
+    ),
+  })),
 
   on(updateList, (state, { boardId, list }) => ({
     ...state,
@@ -202,6 +271,18 @@ export const boardsReducer = createReducer(
         ? {
             ...board,
             lists: board.lists.map((l) => (l.id === list.id ? list : l)),
+          }
+        : board
+    ),
+  })),
+
+  on(deleteList, (state, { boardId, listId }) => ({
+    ...state,
+    boards: state.boards.map((board) =>
+      board.id === boardId
+        ? {
+            ...board,
+            lists: board.lists.filter((list) => list.id !== listId),
           }
         : board
     ),
