@@ -4,10 +4,11 @@ import {
   effect,
   input,
   Input,
+  OnInit,
   output,
   signal,
 } from '@angular/core';
-import {TaskComponent } from '../task/task.component';
+import { TaskComponent } from '../task/task.component';
 import { AddTaskModaleComponent } from '../add-task-modale/add-task-modale.component';
 import {
   CdkDropList,
@@ -18,6 +19,8 @@ import {
   transferArrayItem,
 } from '@angular/cdk/drag-drop';
 import { List, Task } from '../../app/store/boards.models';
+import { Store } from '@ngrx/store';
+import { addTask, updateTask } from '../../app/store/boards.actions';
 
 @Component({
   selector: 'app-list',
@@ -26,12 +29,28 @@ import { List, Task } from '../../app/store/boards.models';
   templateUrl: './list.component.html',
   styleUrl: './list.component.css',
 })
-export class ListComponent {
+export class ListComponent implements OnInit{
   listSignal = input.required<List>();
-  connectedDropLists = input<string[]>([]);
+  boardId = input.required<number>();
+  connectedDropLists = input.required<string[]>(); 
   updateList = output<List>();
 
+  taskMove = output<{
+    sourceListId: number;
+    targetListId: number;
+    taskId: number;
+    sourceIndex: number;
+    targetIndex: number;
+  }>();
+
+  ngOnInit() {
+  console.log('DropList ID:', 'cdk-drop-list-' + this.listSignal().id);
+  console.log('Connected to:', this.connectedDropLists);
+}
+
   isModalOpen = signal(false);
+
+  constructor(private store: Store) {}
 
   openModal() {
     this.isModalOpen.set(true);
@@ -42,29 +61,17 @@ export class ListComponent {
   }
 
   get connectedLists(): string[] {
-    return this.connectedDropLists() ?? [];
+    return this.connectedDropLists();
   }
 
   addTask(newTask: { title: string; description: string }) {
-    const currentList = this.listSignal();
-
-    const maxId =
-      currentList.tasks.length > 0
-        ? Math.max(...currentList.tasks.map((task) => task.id))
-        : 0;
-
-    const taskToAdd: Task = {
-      id: maxId + 1,
-      title: newTask.title,
-      description: newTask.description,
-    };
-
-    const updatedList = {
-      ...currentList,
-      tasks: [...currentList.tasks, taskToAdd],
-    };
-
-    this.updateList.emit(updatedList);
+    this.store.dispatch(
+      addTask({
+        boardId: this.boardId(),
+        listId: this.listSignal().id,
+        task: newTask,
+      })
+    );
     this.closeModal();
   }
 
@@ -72,50 +79,37 @@ export class ListComponent {
     const currentList = this.listSignal();
 
     if (event.previousContainer === event.container) {
-      const updatedTasks = [...currentList.tasks];
-      moveItemInArray(updatedTasks, event.previousIndex, event.currentIndex);
-
-      const updatedList = { ...currentList, tasks: updatedTasks };
-      this.updateList.emit(updatedList);
+      this.taskMove.emit({
+        sourceListId: currentList.id,
+        targetListId: currentList.id,
+        taskId: event.previousContainer.data[event.previousIndex].id,
+        sourceIndex: event.previousIndex,
+        targetIndex: event.currentIndex,
+      });
     } else {
-      const previousTasks = event.previousContainer.data;
-      const currentTasks = [...currentList.tasks];
-
-      const [movedTask] = previousTasks.splice(event.previousIndex, 1);
-      currentTasks.splice(event.currentIndex, 0, movedTask);
-
       const sourceListId = +event.previousContainer.id.replace(
         'cdk-drop-list-',
         ''
       );
+      const movedTask = event.previousContainer.data[event.previousIndex];
 
-      const sourceListUpdate: List = {
-        id: sourceListId,
-        title: '',
-        tasks: previousTasks,
-      };
-
-      this.updateList.emit(sourceListUpdate);
-
-      const updatedList: List = {
-        ...currentList,
-        tasks: currentTasks,
-      };
-
-      this.updateList.emit(updatedList);
+      this.taskMove.emit({
+        sourceListId: sourceListId,
+        targetListId: currentList.id,
+        taskId: movedTask.id,
+        sourceIndex: event.previousIndex,
+        targetIndex: event.currentIndex,
+      });
     }
   }
 
   updateTask(editedTask: Task) {
-    const updatedTasks = this.listSignal().tasks.map((task) =>
-      task.id === editedTask.id ? editedTask : task
+    this.store.dispatch(
+      updateTask({
+        boardId: this.boardId(),
+        listId: this.listSignal().id,
+        task: editedTask,
+      })
     );
-
-    const updatedList = {
-      ...this.listSignal(),
-      tasks: updatedTasks,
-    };
-
-    this.updateList.emit(updatedList);
   }
 }

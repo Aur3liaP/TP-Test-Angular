@@ -1,20 +1,23 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
+import { Board } from '../../app/store/boards.models';
+import { selectAllBoards } from '../../app/store/boards.selectors';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'app-home',
-  imports: [],
+  imports: [AsyncPipe],
   templateUrl: './home.component.html',
-  styleUrl: './home.component.css'
+  styleUrl: './home.component.css',
 })
 export class HomeComponent {
-  boards = [
-    { id: 1, title: 'Choses à faire' },
-    { id: 2, title: 'Projet perso' },
-    { id: 3, title: 'Les bonnes résolutions 2025' },
-  ];
+  boards$: Observable<Board[]>;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private store: Store) {
+    this.boards$ = this.store.select(selectAllBoards);
+  }
 
   goToBoard(id: number) {
     this.router.navigate(['/board', id]);

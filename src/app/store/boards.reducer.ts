@@ -27,7 +27,7 @@ function generateNewTaskId(tasks: Task[]): number {
 
 export const boardsReducer = createReducer(
   initialState,
-  
+
   // -----------------------Reducer pour les boards-----------------------
   on(loadBoardsSuccess, (state, { boards }) => ({
     ...state,
@@ -108,45 +108,42 @@ export const boardsReducer = createReducer(
     })
   ),
 
-  on(
-    moveTask,
-    (
-      state,
-      { boardId, sourceListId, targetListId, taskId, sourceIndex, targetIndex }
-    ) => ({
+on(moveTask, (state, { boardId, sourceListId, targetListId, taskId, sourceIndex, targetIndex }) => {
+    const board = state.boards.find(b => b.id === boardId);
+    if (!board) return state;
+
+    const sourceList = board.lists.find(l => l.id === sourceListId);
+    const taskToMove = sourceList?.tasks.find(t => t.id === taskId);
+    
+    if (!taskToMove) return state;
+
+    return {
       ...state,
-      boards: state.boards.map((board) =>
+      boards: state.boards.map(board =>
         board.id === boardId
           ? {
               ...board,
-              lists: board.lists.map((list) => {
+              lists: board.lists.map(list => {
                 if (list.id === sourceListId) {
                   return {
                     ...list,
-                    tasks: list.tasks.filter((task) => task.id !== taskId),
+                    tasks: list.tasks.filter(task => task.id !== taskId)
                   };
                 } else if (list.id === targetListId) {
-                  const taskToMove = state.boards
-                    .find((b) => b.id === boardId)
-                    ?.lists.find((l) => l.id === sourceListId)
-                    ?.tasks.find((t) => t.id === taskId);
-
-                  if (taskToMove) {
-                    const newTasks = [...list.tasks];
-                    newTasks.splice(targetIndex, 0, taskToMove);
-                    return {
-                      ...list,
-                      tasks: newTasks,
-                    };
-                  }
+                  const newTasks = [...list.tasks];
+                  newTasks.splice(targetIndex, 0, taskToMove);
+                  return {
+                    ...list,
+                    tasks: newTasks
+                  };
                 }
                 return list;
-              }),
+              })
             }
           : board
-      ),
-    })
-  ),
+      )
+    };
+  }),
 
   // -----------------------Reducer pour les listes-----------------------
 

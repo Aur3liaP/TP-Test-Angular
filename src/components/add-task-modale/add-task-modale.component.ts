@@ -44,7 +44,7 @@ export class AddTaskModaleComponent {
   const value = event.target.value;
     if (value.length > this.maxChars) {
       this.taskForm.patchValue({
-        descrition: value.slice(0, this.maxChars)
+        description: value.slice(0, this.maxChars)
       });
     }
   }

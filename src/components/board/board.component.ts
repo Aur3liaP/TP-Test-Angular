@@ -2,38 +2,69 @@ import { Component, input, OnInit, output, signal } from '@angular/core';
 import { ListComponent } from "../list/list.component";
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { List } from '../../app/store/boards.models';
+import { Store } from '@ngrx/store';
+import { moveTask, reorderTask, selectBoard, updateList } from '../../app/store/boards.actions';
+import { map, Observable } from 'rxjs';
+import { selectBoardLists, selectBoardTitle } from '../../app/store/boards.selectors';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'app-board',
-  imports: [ListComponent, DragDropModule],
+  imports: [ListComponent, DragDropModule, AsyncPipe],
   templateUrl: './board.component.html',
   styleUrl: './board.component.css'
 })
-export class BoardComponent implements OnInit {
+export class BoardComponent implements OnInit{
   boardId = input.required<number>();
-  boardTitle = signal<string>('');
-  lists = signal<List[]>([]);
+  lists$!: Observable<List[]>;
+  boardTitle$!: Observable<string>;
+  connectedDropListIds = signal<string[]>([]);
 
-    ngOnInit() {
-    const fakeBoards: { [key: number]: List[] } = {
-      1: [{ id: 1, title: 'À faire', tasks: [{ id: 1, title: 'Tâche 1', description: 'chose à faire' }, { id: 2, title: 'Tâche 2', description: 'chose à faire' }] }, { id: 2, title: 'En cours', tasks: [{ id: 4, title: 'Tâche 4', description: 'chose à faire' }] }, { id: 3, title: 'Fait', tasks: [{ id: 3, title: 'Tâche 3', description: 'chose à faire' }] }], 
-      2: [{ id: 1, title: 'À faire', tasks: [{ id: 1, title: 'Tâche 1', description: 'chose à faire' }, { id: 2, title: 'Tâche 2', description: 'chose à faire' }] }, { id: 2, title: 'En cours', tasks: [{ id: 4, title: 'Tâche 4', description: 'chose à faire' }] }, { id: 3, title: 'Fait', tasks: [{ id: 3, title: 'Tâche 3', description: 'chose à faire' }] }], 
-      3: [{ id: 1, title: 'À faire', tasks: [{ id: 1, title: 'Tâche 1', description: 'chose à faire' }, { id: 2, title: 'Tâche 2', description: 'chose à faire' }] }, { id: 2, title: 'En cours', tasks: [{ id: 4, title: 'Tâche 4', description: 'chose à faire' }] }, { id: 3, title: 'Fait', tasks: [{ id: 3, title: 'Tâche 3', description: 'chose à faire' }] }]
-      };
-      this.lists.set(fakeBoards[this.boardId()] || []);
-    }
+  constructor(private store: Store) {}
 
+  ngOnInit(): void {
+    const id = this.boardId();
+    console.log('Board ID in BoardComponent:', id);
 
+    this.lists$ = this.store.select(selectBoardLists(id));
+    this.boardTitle$ = this.store.select(selectBoardTitle(id));
+
+    this.lists$.subscribe(lists => {
+      this.connectedDropListIds.set(lists.map(list => `cdk-drop-list-${list.id}`));
+    });
+  }
+  
   handleListUpdate(updatedList: List) {
-    const updatedLists = this.lists().map((l: List) =>
-    l.id === updatedList.id
-      ? { ...updatedList, title: l.title }
-      : l
-  );
-    this.lists.set(updatedLists);
+    this.store.dispatch(updateList({
+      boardId: this.boardId(),
+      list: updatedList
+    }));
   }
 
-  get connectedDropListIds(): string[] {
-  return this.lists().map((l) => 'cdk-drop-list-' + l.id);
-}
+
+  handleTaskMove(event: {
+    sourceListId: number;
+    targetListId: number;
+    taskId: number;
+    sourceIndex: number;
+    targetIndex: number
+  }) {
+    if (event.sourceListId === event.targetListId) {
+      this.store.dispatch(reorderTask({
+        boardId: this.boardId(),
+        listId: event.sourceListId,
+        previousIndex: event.sourceIndex,
+        currentIndex: event.targetIndex
+      }));
+    } else {
+      this.store.dispatch(moveTask({
+        boardId: this.boardId(),
+        sourceListId: event.sourceListId,
+        targetListId: event.targetListId,
+        taskId: event.taskId,
+        sourceIndex: event.sourceIndex,
+        targetIndex: event.targetIndex
+      }));
+    }
+  }
 }
