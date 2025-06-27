@@ -2,7 +2,7 @@ import { Component, inject, input, OnInit } from '@angular/core';
 import { BoardComponent } from '../../components/board/board.component';
 import { ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
-import { selectBoard } from '../../app/store/boards.actions';
+import { selectBoard } from '../../store/boards.actions';
 
 @Component({
   selector: 'app-board-details',

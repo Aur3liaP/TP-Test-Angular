@@ -1,7 +1,7 @@
 import { Component, input, OnInit, output, signal } from '@angular/core';
 import { ListComponent } from '../list/list.component';
 import { CdkDragDrop, DragDropModule } from '@angular/cdk/drag-drop';
-import { Board, List, Task } from '../../app/store/boards.models';
+import { Board, List, Task } from '../../store/boards.models';
 import { Store } from '@ngrx/store';
 import {
   addList,
@@ -13,16 +13,16 @@ import {
   setDragState,
   updateBoard,
   updateList,
-} from '../../app/store/boards.actions';
+} from '../../store/boards.actions';
 import { Observable } from 'rxjs';
 import {
   selectBoardLists,
   selectBoardTitle,
   selectIsDragging,
-} from '../../app/store/boards.selectors';
+} from '../../store/boards.selectors';
 import { AsyncPipe } from '@angular/common';
 import { Router } from '@angular/router';
-import { EditBoardModaleComponent } from "../edit-board-modale/edit-board-modale.component";
+import { EditBoardModaleComponent } from '../edit-board-modale/edit-board-modale.component';
 
 @Component({
   selector: 'app-board',
@@ -41,9 +41,8 @@ export class BoardComponent implements OnInit {
   editableTitle = '';
   newListTitle = '';
   lists: List[] = [];
-  
-  constructor(private router: Router, private store: Store) {}
 
+  constructor(private router: Router, private store: Store) {}
 
   ngOnInit(): void {
     const id = this.boardId();
@@ -147,16 +146,19 @@ export class BoardComponent implements OnInit {
 
   onTaskDroppedToTrash(event: CdkDragDrop<any>) {
     const task = event.item.data as Task;
-    const sourceListId = +event.previousContainer.id.replace('cdk-drop-list-', '');
-    
+    const sourceListId = +event.previousContainer.id.replace(
+      'cdk-drop-list-',
+      ''
+    );
+
     this.store.dispatch(
-      deleteTask({ 
-        boardId: this.boardId(), 
-        listId: sourceListId, 
-        taskId: task.id 
+      deleteTask({
+        boardId: this.boardId(),
+        listId: sourceListId,
+        taskId: task.id,
       })
     );
-    
+
     this.store.dispatch(setDragState({ isDragging: false }));
   }
 }

@@ -1,9 +1,9 @@
 import { Component, input, Input, output, signal } from '@angular/core';
-import { Task } from '../../app/store/boards.models';
+import { Task } from '../../store/boards.models';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { DragDropModule } from '@angular/cdk/drag-drop';
-import { setDragState } from '../../app/store/boards.actions';
+import { setDragState } from '../../store/boards.actions';
 
 @Component({
   selector: 'app-task',

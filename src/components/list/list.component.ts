@@ -2,9 +2,9 @@ import { Component, input, output, signal } from '@angular/core';
 import { TaskComponent } from '../task/task.component';
 import { AddTaskModaleComponent } from '../add-task-modale/add-task-modale.component';
 import { DragDropModule, CdkDragDrop } from '@angular/cdk/drag-drop';
-import { List, Task } from '../../app/store/boards.models';
+import { List, Task } from '../../store/boards.models';
 import { Store } from '@ngrx/store';
-import { addTask, updateTask } from '../../app/store/boards.actions';
+import { addTask, updateTask } from '../../store/boards.actions';
 
 @Component({
   selector: 'app-list',
@@ -99,5 +99,4 @@ export class ListComponent {
       })
     );
   }
-
 }

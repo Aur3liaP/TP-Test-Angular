@@ -3,7 +3,7 @@ import { BoardDetailsComponent } from './board-details.component';
 import { BoardComponent } from '../../components/board/board.component';
 import { ActivatedRoute } from '@angular/router';
 import { provideStore } from '@ngrx/store';
-import { boardsReducer } from '../../app/store/boards.reducer';
+import { boardsReducer } from '../../store/boards.reducer';
 import { of } from 'rxjs';
 
 describe('BoardDetailsComponent', () => {
@@ -17,12 +17,18 @@ describe('BoardDetailsComponent', () => {
         {
           provide: ActivatedRoute,
           useValue: {
-            paramMap: of({ get: (param: string) => (param === 'id' ? '1' : null) }),
-            snapshot: { paramMap: { get: (param: string) => (param === 'id' ? '1' : null) } }
-          }
+            paramMap: of({
+              get: (param: string) => (param === 'id' ? '1' : null),
+            }),
+            snapshot: {
+              paramMap: {
+                get: (param: string) => (param === 'id' ? '1' : null),
+              },
+            },
+          },
         },
-        provideStore({ board: boardsReducer })
-      ]
+        provideStore({ board: boardsReducer }),
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(BoardDetailsComponent);

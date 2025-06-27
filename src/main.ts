@@ -3,11 +3,11 @@ import { appConfig } from './app/app.config';
 import { AppComponent } from './app/app.component';
 import { provideStore } from '@ngrx/store';
 import { provideEffects } from '@ngrx/effects';
-import { boardsReducer } from './app/store/boards.reducer';
+import { boardsReducer } from './store/boards.reducer';
 
 bootstrapApplication(AppComponent, {
   providers: [
-    provideStore({ boards : boardsReducer }),
+    provideStore({ boards: boardsReducer }),
     provideEffects([]),
     ...appConfig.providers,
   ],
