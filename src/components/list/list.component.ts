@@ -18,6 +18,8 @@ export class ListComponent {
   boardId = input.required<number>();
   connectedDropLists = input.required<string[]>();
   updateList = output<List>();
+  dragStarted = output<void>();
+  dragEnded = output<void>();
 
   taskMove = output<{
     sourceListId: number;
@@ -57,9 +59,14 @@ export class ListComponent {
   drop(event: CdkDragDrop<Task[] | undefined>) {
     const currentList = this.listSignal();
 
+    if (event.container.id === 'trash-drop-list') {
+      return;
+    }
+
     if (!event.previousContainer.data || !event.container.data) {
       return;
     }
+
     if (event.previousContainer === event.container) {
       this.taskMove.emit({
         sourceListId: currentList.id,
@@ -93,5 +100,13 @@ export class ListComponent {
         task: editedTask,
       })
     );
+  }
+
+  onTaskDragStarted() {
+    this.dragStarted.emit();
+  }
+
+  onTaskDragEnded() {
+    this.dragEnded.emit();
   }
 }

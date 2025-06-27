@@ -1,12 +1,13 @@
 import { Component, input, OnInit, output, signal } from '@angular/core';
 import { ListComponent } from '../list/list.component';
-import { DragDropModule } from '@angular/cdk/drag-drop';
-import { Board, List } from '../../app/store/boards.models';
+import { CdkDragDrop, DragDropModule } from '@angular/cdk/drag-drop';
+import { Board, List, Task } from '../../app/store/boards.models';
 import { Store } from '@ngrx/store';
 import {
   addList,
   deleteBoard,
   deleteList,
+  deleteTask,
   moveTask,
   reorderTask,
   updateBoard,
@@ -38,6 +39,8 @@ export class BoardComponent implements OnInit {
   newListTitle = '';
   lists: List[] = [];
 
+  isDragging = signal(false);
+
   constructor(private router: Router, private store: Store) {}
 
   ngOnInit(): void {
@@ -48,9 +51,9 @@ export class BoardComponent implements OnInit {
 
     this.boardTitle$.subscribe((title) => (this.editableTitle = title));
     this.lists$.subscribe((lists) => {
-      this.connectedDropListIds.set(
-        lists.map((list) => `cdk-drop-list-${list.id}`)
-      );
+      const listIds = lists.map((list) => `cdk-drop-list-${list.id}`);
+      listIds.push('trash-drop-list');
+      this.connectedDropListIds.set(listIds);
       this.lists = lists;
     });
   }
@@ -58,6 +61,7 @@ export class BoardComponent implements OnInit {
   openBoardModal() {
     this.isBoardModalOpen.set(true);
   }
+
   closeBoardModal() {
     this.isBoardModalOpen.set(false);
     this.newListTitle = '';
@@ -72,14 +76,14 @@ export class BoardComponent implements OnInit {
     );
   }
 
- addListFromModal(event: { title: string }) {
-  this.store.dispatch(
-    addList({
-      boardId: this.boardId(),
-      title: event.title,
-    })
-  );
-}
+  addListFromModal(event: { title: string }) {
+    this.store.dispatch(
+      addList({
+        boardId: this.boardId(),
+        title: event.title,
+      })
+    );
+  }
 
   deleteList(listId: number) {
     this.store.dispatch(
@@ -93,7 +97,6 @@ export class BoardComponent implements OnInit {
   deleteBoard() {
     if (confirm('Es-tu sûr(e) de vouloir supprimer ce tableau ?')) {
       this.store.dispatch(deleteBoard({ boardId: this.boardId() }));
-      this.closeBoardModal();
       this.router.navigate(['']);
     }
   }
@@ -135,5 +138,30 @@ export class BoardComponent implements OnInit {
         })
       );
     }
+  }
+
+  onDragStarted() {
+    this.isDragging.set(true);
+  }
+
+  onDragEnded() {
+    this.isDragging.set(false);
+  }
+
+  isTrashAccepting = () => true;
+
+  onTaskDroppedToTrash(event: CdkDragDrop<any>) {
+    const task = event.item.data as Task;
+    const sourceListId = +event.previousContainer.id.replace('cdk-drop-list-', '');
+    
+    this.store.dispatch(
+      deleteTask({ 
+        boardId: this.boardId(), 
+        listId: sourceListId, 
+        taskId: task.id 
+      })
+    );
+    
+    this.isDragging.set(false);
   }
 }

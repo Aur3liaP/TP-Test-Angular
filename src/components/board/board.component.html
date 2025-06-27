@@ -1,25 +1,49 @@
-<div class="h-full shadow-lg bg-white rounded-md">
+<div class="h-full shadow-lg bg-white rounded-md relative">
   <h1 class="text-3xl font-bold py-4 text-center">
     {{ boardTitle$ | async }}
-    <button (click)="openBoardModal()" class="text-xl cursor-pointer">
+    <button type="button" title="Modifier le tableau" (click)="openBoardModal()" class="text-xl cursor-pointer">
       ✏️
     </button>
   </h1>
+  <button
+    type="button"
+    (click)="deleteBoard()"
+    class="cursor-pointer absolute right-5 top-5 text-xl"
+    title="Supprimer le tableau"
+  >
+    🗑️
+  </button>
+  
   <div
     class="flex gap-4 p-4 h-8/10 justify-around overflow-x-auto"
     cdkDropListGroup
   >
     @for (list of lists$ | async; track list.id) {
-    <app-list
-      [listSignal]="list"
-      [connectedDropLists]="connectedDropListIds()"
-      [boardId]="boardId()"
-      (updateList)="handleListUpdate($event)"
-      (taskMove)="handleTaskMove($event)"
-      class="min-w-1/4 flex-shrink-0"
-    ></app-list>
+      <app-list
+        [listSignal]="list"
+        [connectedDropLists]="connectedDropListIds()"
+        [boardId]="boardId()"
+        (updateList)="handleListUpdate($event)"
+        (taskMove)="handleTaskMove($event)"
+        (dragStarted)="onDragStarted()"
+        (dragEnded)="onDragEnded()"
+        class="min-w-1/4 flex-shrink-0"
+      ></app-list>
     }
+    
   </div>
+</div>
+
+<div
+  cdkDropList
+  id="trash-drop-list"
+  [cdkDropListData]="[]"
+  (cdkDropListDropped)="onTaskDroppedToTrash($event)"
+  class="fixed bottom-4 right-4 w-24 h-24 rounded-full shadow-xl hover:bg-black/10 transition-all cursor-pointer z-50 flex justify-center items-center hover:animate-wiggle"
+  [style.opacity]="isDragging() ? '1' : '0'"
+  [style.pointer-events]="isDragging() ? 'auto' : 'none'"
+>
+  <span class="text-4xl">🗑️</span>
 </div>
 
 @if (isBoardModalOpen()) {

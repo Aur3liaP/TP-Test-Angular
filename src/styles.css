@@ -5,3 +5,21 @@
 @utility btn-violet {
   @apply text-white bg-violet-600 hover:bg-violet-700 rounded-md transition-colors cursor-pointer;
 }
+
+@theme {
+  --animate-wiggle: wiggle 1s ease-in-out infinite;
+  @keyframes wiggle {
+    0%,
+    100% {
+      transform: rotate(-5deg);
+    }
+    50% {
+      transform: rotate(5deg);
+    }
+  }
+}
+
+
+.cdk-drag-placeholder {
+  display: none;
+}

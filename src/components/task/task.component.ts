@@ -1,19 +1,26 @@
 import { Component, input, Input, output, signal } from '@angular/core';
 import { Task } from '../../app/store/boards.models';
+import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-task',
-  imports: [],
+  imports: [DragDropModule],
   templateUrl: './task.component.html',
   styleUrl: './task.component.css',
 })
 export class TaskComponent {
   task = input.required<Task>();
   update = output<Task>();
+  dragStarted = output<void>();
+  dragEnded = output<void>();
 
   isEditing = signal(false);
   editedTitle = signal('');
   editedDescription = signal('');
+
+  constructor(private store: Store) {}
 
   enableEdit() {
     this.editedTitle.set(this.task().title);
@@ -39,8 +46,20 @@ export class TaskComponent {
     const input = event.target as HTMLInputElement;
     this.editedTitle.set(input.value);
   }
+
   onDescriptionInput(event: Event) {
     const input = event.target as HTMLInputElement;
     this.editedDescription.set(input.value);
   }
+
+  onDragStarted() {
+    console.log('Drag started in TaskComponent');
+    this.dragStarted.emit();
+  }
+
+  onDragEnded() {
+    console.log('Drag ended in TaskComponent');
+    this.dragEnded.emit();
+  }
+
 }
