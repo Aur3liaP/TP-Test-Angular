@@ -51,6 +51,6 @@ describe('AddTaskModaleComponent', () => {
       description: 'Test Description',
     });
     component.closeModal();
-    expect(component.taskForm.value).toEqual({ title: '', description: '' });
+    expect(component.taskForm.value).toEqual({ title: null, description: null });
   });
 });

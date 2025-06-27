@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AddBoardModaleComponent } from './add-board-modale.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 describe('AddBoardModaleComponent', () => {
   let component: AddBoardModaleComponent;
@@ -8,7 +9,7 @@ describe('AddBoardModaleComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AddBoardModaleComponent]
+      imports: [AddBoardModaleComponent, FormsModule, ReactiveFormsModule]
     })
     .compileComponents();
 

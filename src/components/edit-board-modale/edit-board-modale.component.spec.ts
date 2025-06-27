@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { EditBoardModaleComponent } from './edit-board-modale.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 describe('EditBoardModaleComponent', () => {
   let component: EditBoardModaleComponent;
@@ -8,7 +9,7 @@ describe('EditBoardModaleComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [EditBoardModaleComponent]
+      imports: [EditBoardModaleComponent, FormsModule, ReactiveFormsModule]
     })
     .compileComponents();
 
