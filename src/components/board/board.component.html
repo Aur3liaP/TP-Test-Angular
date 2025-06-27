@@ -28,6 +28,7 @@
     [existingLists]="lists"
     (updateBoardTitle)="editableTitle = $event; saveBoardTitle()"
     (addList)="addListFromModal($event)"
+    (updateList)="handleListUpdate($event)"
     (deleteList)="deleteList($event)"
     (close)="closeBoardModal()"
   />

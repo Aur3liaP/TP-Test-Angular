@@ -1,15 +1,7 @@
-import {
-  Component,
-  input,
-  output,
-  signal,
-} from '@angular/core';
+import { Component, input, output, signal } from '@angular/core';
 import { TaskComponent } from '../task/task.component';
 import { AddTaskModaleComponent } from '../add-task-modale/add-task-modale.component';
-import {
-  DragDropModule,
-  CdkDragDrop,
-} from '@angular/cdk/drag-drop';
+import { DragDropModule, CdkDragDrop } from '@angular/cdk/drag-drop';
 import { List, Task } from '../../app/store/boards.models';
 import { Store } from '@ngrx/store';
 import { addTask, updateTask } from '../../app/store/boards.actions';
@@ -21,10 +13,10 @@ import { addTask, updateTask } from '../../app/store/boards.actions';
   templateUrl: './list.component.html',
   styleUrl: './list.component.css',
 })
-export class ListComponent{
+export class ListComponent {
   listSignal = input.required<List>();
   boardId = input.required<number>();
-  connectedDropLists = input.required<string[]>(); 
+  connectedDropLists = input.required<string[]>();
   updateList = output<List>();
 
   taskMove = output<{
@@ -62,9 +54,12 @@ export class ListComponent{
     this.closeModal();
   }
 
-  drop(event: CdkDragDrop<Task[]>) {
+  drop(event: CdkDragDrop<Task[] | undefined>) {
     const currentList = this.listSignal();
 
+    if (!event.previousContainer.data || !event.container.data) {
+      return;
+    }
     if (event.previousContainer === event.container) {
       this.taskMove.emit({
         sourceListId: currentList.id,
