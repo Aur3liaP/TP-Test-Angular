@@ -1,7 +1,6 @@
 import { createReducer, on } from '@ngrx/store';
 import { Board, List, Task } from './boards.models';
 import {
-  loadBoardsSuccess,
   selectBoard,
   addTask,
   updateTask,
@@ -12,10 +11,10 @@ import {
   updateList,
   deleteList,
   addBoard,
-  addBoardSuccess,
   updateBoard,
   deleteBoard,
   setDragState,
+  loadBoards,
 } from './boards.actions';
 import { initialBoards } from '../datas/initial-board';
 
@@ -51,7 +50,7 @@ export const boardsReducer = createReducer(
   initialState,
 
   // -----------------------Reducer pour les boards-----------------------
-  on(loadBoardsSuccess, (state, { boards }) => ({
+  on(loadBoards, (state, { boards }) => ({
     ...state,
     boards,
   })),
@@ -90,10 +89,10 @@ export const boardsReducer = createReducer(
     };
   }),
 
-  on(addBoardSuccess, (state, { board }) => ({
-    ...state,
-    boards: [...state.boards, board],
-  })),
+  // on(addBoardSuccess, (state, { board }) => ({
+  //   ...state,
+  //   boards: [...state.boards, board],
+  // })),
 
   on(updateBoard, (state, { boardId, title }) => ({
     ...state,

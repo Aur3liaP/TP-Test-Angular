@@ -1,6 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ListComponent } from './list.component';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { AddTaskModaleComponent } from '../add-task-modale/add-task-modale.component';
+import { TaskComponent } from '../task/task.component';
 
 describe('ListComponent', () => {
   let component: ListComponent;
@@ -8,7 +11,7 @@ describe('ListComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ListComponent]
+      imports: [ListComponent, TaskComponent, AddTaskModaleComponent, DragDropModule]
     })
     .compileComponents();
 

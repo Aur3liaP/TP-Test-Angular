@@ -2,8 +2,8 @@ import { createAction, props } from '@ngrx/store';
 import { Board, List, Task } from './boards.models';
 
 // -----------------------Actions pour les boards-----------------------
-export const loadBoards = createAction('[Boards] Load Boards');
-export const loadBoardsSuccess = createAction(
+// export const loadBoards = createAction('[Boards] Load Boards');
+export const loadBoards = createAction(
   '[Boards] Load Boards Success',
   props<{ boards: Board[] }>()
 );
@@ -17,10 +17,10 @@ export const addBoard = createAction(
   props<{ title: string }>()
 );
 
-export const addBoardSuccess = createAction(
-  '[Boards] Add Board Success',
-  props<{ board: Board }>()
-);
+// export const addBoardSuccess = createAction(
+//   '[Boards] Add Board Success',
+//   props<{ board: Board }>()
+// );
 
 export const updateBoard = createAction(
   '[Boards] Update Board',
