@@ -18,8 +18,8 @@ export class ListComponent {
   boardId = input.required<number>();
   connectedDropLists = input.required<string[]>();
   updateList = output<List>();
-  dragStarted = output<void>();
-  dragEnded = output<void>();
+  // dragStarted = output<void>();
+  // dragEnded = output<void>();
 
   taskMove = output<{
     sourceListId: number;
@@ -102,11 +102,4 @@ export class ListComponent {
     );
   }
 
-  onTaskDragStarted() {
-    this.dragStarted.emit();
-  }
-
-  onTaskDragEnded() {
-    this.dragEnded.emit();
-  }
 }

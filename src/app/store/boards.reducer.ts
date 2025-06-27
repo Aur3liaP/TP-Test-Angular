@@ -15,17 +15,20 @@ import {
   addBoardSuccess,
   updateBoard,
   deleteBoard,
+  setDragState,
 } from './boards.actions';
 import { initialBoards } from '../datas/initial-board';
 
 export interface BoardsState {
   boards: Board[];
   selectedBoardId: number | null;
+  isDragging: boolean;
 }
 
 export const initialState: BoardsState = {
   boards: initialBoards,
   selectedBoardId: null,
+  isDragging: false
 };
 
 function generateNewTaskId(tasks?: Task[]): number {
@@ -242,6 +245,11 @@ export const boardsReducer = createReducer(
       };
     }
   ),
+
+  on(setDragState, (state, { isDragging }) => ({
+  ...state,
+  isDragging
+})),
 
   // -----------------------Reducer pour les listes-----------------------
   

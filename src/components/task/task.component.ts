@@ -3,6 +3,7 @@ import { Task } from '../../app/store/boards.models';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { DragDropModule } from '@angular/cdk/drag-drop';
+import { setDragState } from '../../app/store/boards.actions';
 
 @Component({
   selector: 'app-task',
@@ -53,13 +54,10 @@ export class TaskComponent {
   }
 
   onDragStarted() {
-    console.log('Drag started in TaskComponent');
-    this.dragStarted.emit();
+    this.store.dispatch(setDragState({ isDragging: true }));
   }
 
   onDragEnded() {
-    console.log('Drag ended in TaskComponent');
-    this.dragEnded.emit();
+    this.store.dispatch(setDragState({ isDragging: false }));
   }
-
 }

@@ -33,3 +33,8 @@ export const selectBoardTitle = (boardId: number) =>
     selectBoardsState,
     (state) => state.boards.find((board) => board.id === boardId)?.title || ''
   );
+
+export const selectIsDragging = createSelector(
+  selectBoardsState,
+  (state) => state.isDragging
+);

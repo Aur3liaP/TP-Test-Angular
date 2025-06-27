@@ -10,6 +10,7 @@ import {
   deleteTask,
   moveTask,
   reorderTask,
+  setDragState,
   updateBoard,
   updateList,
 } from '../../app/store/boards.actions';
@@ -17,6 +18,7 @@ import { Observable } from 'rxjs';
 import {
   selectBoardLists,
   selectBoardTitle,
+  selectIsDragging,
 } from '../../app/store/boards.selectors';
 import { AsyncPipe } from '@angular/common';
 import { Router } from '@angular/router';
@@ -33,15 +35,15 @@ export class BoardComponent implements OnInit {
   lists$!: Observable<List[]>;
   boardTitle$!: Observable<string>;
   connectedDropListIds = signal<string[]>([]);
+  isDragging$!: Observable<boolean>;
 
   isBoardModalOpen = signal(false);
   editableTitle = '';
   newListTitle = '';
   lists: List[] = [];
-
-  isDragging = signal(false);
-
+  
   constructor(private router: Router, private store: Store) {}
+
 
   ngOnInit(): void {
     const id = this.boardId();
@@ -56,6 +58,7 @@ export class BoardComponent implements OnInit {
       this.connectedDropListIds.set(listIds);
       this.lists = lists;
     });
+    this.isDragging$ = this.store.select(selectIsDragging);
   }
 
   openBoardModal() {
@@ -140,14 +143,6 @@ export class BoardComponent implements OnInit {
     }
   }
 
-  onDragStarted() {
-    this.isDragging.set(true);
-  }
-
-  onDragEnded() {
-    this.isDragging.set(false);
-  }
-
   isTrashAccepting = () => true;
 
   onTaskDroppedToTrash(event: CdkDragDrop<any>) {
@@ -162,6 +157,6 @@ export class BoardComponent implements OnInit {
       })
     );
     
-    this.isDragging.set(false);
+    this.store.dispatch(setDragState({ isDragging: false }));
   }
 }

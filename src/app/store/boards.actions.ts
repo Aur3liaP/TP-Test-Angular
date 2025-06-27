@@ -70,6 +70,11 @@ export const reorderTask = createAction(
   }>()
 );
 
+export const setDragState = createAction(
+  '[Tasks] Set Drag List',
+  props<{ isDragging: boolean }>()
+);
+
 // -----------------------Actions pour les listes-----------------------
 export const addList = createAction(
   '[Lists] Add List',

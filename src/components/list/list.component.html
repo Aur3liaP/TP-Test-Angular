@@ -19,8 +19,6 @@
     <app-task
   [task]="task"
   (update)="updateTask($event)"
-  (dragStarted)="onTaskDragStarted()"
-  (dragEnded)="onTaskDragEnded()"
     ></app-task>
     } @empty {
     <p class="text-gray-500 text-center py-4">Aucune tâche</p>
